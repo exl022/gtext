@@ -1,5 +1,5 @@
 
-# this is a test to see if it commits
+# this is a test to see if it commits - well, did it work?
 # get libraries
     library(RCurl)
     library(XML)
