@@ -1,4 +1,9 @@
-# maiden branch?
+#-----------------------------------------------------------------------------
+# gtext function takes a search string then plugs it into the google search
+# engine, and returns text scraped from the top three hits.  This is a work in
+# progress, so results are not guaranteed
+#-----------------------------------------------------------------------------
+
 # get libraries
     library(RCurl)
     library(XML)
@@ -6,11 +11,7 @@
     source("htmlToText.R") 
 
 
-# variables  NOTE - SHOULD INTEGRATE THIS INTO THE GTEXT FUNCTION
-    link.threshold <- 3
-
-
-gtext <- function(search.string){
+gtext <- function(search.string, link.threshold){
 # grab google search results
   search.results <- getForm("http://www.google.com/search", hl="en",
                     lr="", q = search.string, btnG="Search")
@@ -19,10 +20,13 @@ gtext <- function(search.string){
 
 # take out the top links from the search result
     # define the regex to get the links:
-        reg1 <- "(?<=hlprwt\\(this\\,\\s\').+?(?=\'\\))"
-        # 2012/03/06 - need a new mask to get the scraping right on google.  did
-        # they change how results are returned?
-        reg1a <- "  " 
+            # 2012/03/06 - need a new mask to get the scraping right on google.  did
+            # they change how results are returned?
+                # [DEPRECATED?] reg1 <- "(?<=hlprwt\\(this\\,\\s\').+?(?=\'\\))"
+            reg1 <- "(?<=\\/url\\?q\\=).+?(?=\\&amp)"
+                # "/url?q=" is the lead tag, "&amp" is the end string.  note that
+                # all "\\" are escapes for perl based regex
+
     # extract weblinks from the google search page - use perl regex
         # create a matrix that stores the location information for the URLs
         site.loc <- gregexpr(reg1,search.results, perl = T)
@@ -55,7 +59,9 @@ gtext <- function(search.string){
         text <- paste(url.stor2[1], url.stor2[2], url.stor2[3], 
         url.stor2[4], url.stor2[5], sep = " ")
             # this was hand hard coded - okay, since you don't have to be 5
-            # clicks long, as long as it is 5 or shorter.
+            # clicks long, as long as it is 5 or shorter.  
+            # HOW DO YOU USE PASTE HERE SUCH THAT IT DOES NOT HAVE TO BE HARD
+            # CODED LIKE THIS?
         output <- cbind(max.len, text) 
             # takes the number of links used and the actual text extracted from
             # that
