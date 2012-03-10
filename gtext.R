@@ -52,7 +52,7 @@ gtext <- function(search.string, link.threshold){
                 # get the text content from the URLs (top [link.thresdhold])
                     url.stor2[i] <- htmlToText(url.stor[i,1])
                 # drop the returns
-                #    url.stor2[i] <- gsub("[\n\t\r]","",url.stor2[i])
+                    url.stor2[i] <- gsub("[\n\t\r]","",url.stor2[i])
                 }
     # create a single record for that search, with all the text from the top
     # [link.thresdhold] from the search.string
